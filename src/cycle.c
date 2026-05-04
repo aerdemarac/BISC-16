@@ -6,12 +6,9 @@ int main(void){
     MemByte* mem = mem_init();
 
     uint32_t rom[] = {
-        encoder_modI(MOVI, GP1, 69),
-        encoder_modR(MOV,  GP0, GP1),
-        encoder_modO(STRB, GP0, UDP, 0),
-        encoder_modO(STRB, GP1, UDP, 1),
-        encoder_modO(LDB,  GP6, UDP, 0),
-        encoder_modO(LDB,  GP7, UDP, 1),
+        encoder_modI(ADDI, GP0, 31),
+        encoder_modI(ADDI, GP1, 9),
+        encoder_modR(ADD,  GP0, GP1)
     };
 
     size_t rom_size = sizeof(rom) / sizeof(rom[0]);

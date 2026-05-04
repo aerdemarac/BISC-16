@@ -13,14 +13,15 @@
 /*         Modes           */
 #define MOD_REG 0U
 #define MOD_IMM 1U
-#define MOD_DER 2U
-#define MOD_OFS 3U
+#define MOD_OFS 2U
+#define MOD_TRI 3U
 
 /*      Field-Masking Macros*/
 #define OP_FIELD(raw)   ((raw >> 26) & 0x1Fu)
 #define MOD_FIELD(raw)  ((raw >> 24) & 0x3U) 
 #define REG1_FIELD(raw) ((raw >> 20) & 0x0Fu) 
 #define REG2_FIELD(raw) ((raw >> 16) & 0x0Fu)
+#define REG3_FIELD(raw) ((raw >> 12) & 0x0Fu)
 #define IMM_FIELD(raw)  ((raw >> 4) & 0xFFFF)
 #define OFS_FIELD(raw)  ((raw >> 0) & 0xFFFF)
 
@@ -55,7 +56,7 @@
 #define MOV  4U       // Mode: 0    // Tested      
 #define MOVI 5U       // Mode: 1    // Tested      
                       // Mode:         
-#define ADD  6U       // Mode: 0          
+#define ADD  6U       // Mode: 0     
 #define ADDI 7U       // Mode: 1          
 #define SUB  8U       // Mode: 0          
 #define SUBI 9U       // Mode: 1          
@@ -110,14 +111,15 @@ void execute(CPU* cpu,MemByte* mem);
 uint16_t* locate_reg(CPU* cpu,uint8_t reg);
 uint8_t* locate_add(MemByte* mem,uint16_t add_val);
 
-void write_reg(CPU* cpu,uint16_t* dest_reg,void* src_add,size_t N);
-void write_mem(MemByte* mem, uint8_t* dest_addr,void* src_add,size_t N);
+void write_reg(uint16_t* dest_ptr,void* src_ptr,size_t N);
+void write_mem(uint8_t* dest_addr,void* src_add,size_t N);
 
-void addition_reg(CPU* cpu,uint16_t* dest_reg,uint16_t* src_reg);
+void addition_reg(uint16_t* dest_reg,uint16_t* src_reg);
+void subtraction_reg(uint16_t* dest_reg,uint16_t* src_reg);
 
 uint32_t encoder_modR(uint8_t op,uint8_t reg1,uint8_t reg2);
 uint32_t encoder_modI(uint8_t op,uint8_t reg1,uint16_t imm);
-uint32_t encoder_modD(uint8_t op,uint8_t reg1,uint8_t reg2);
+uint32_t encoder_modT(uint8_t op,uint8_t reg1,uint8_t reg2,uint8_t reg3);
 uint32_t encoder_modO(uint8_t op,uint8_t reg1,uint8_t reg2,uint16_t ofs);
 
 /*---------------------------------------------------------------*/

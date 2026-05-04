@@ -5,13 +5,14 @@
 #include <string.h>
 
 struct Instruction{
+    uint32_t raw;
     uint8_t opcode;
     uint8_t mode;
+    uint16_t imm;
     uint8_t reg1;
     uint8_t reg2;
-    uint16_t imm;
     uint16_t offset;
-    uint32_t raw;
+    uint8_t reg3;
 };
 
 struct CPU{
@@ -97,11 +98,12 @@ void decode(CPU* cpu){
             cpu->ir.reg1 = REG1_FIELD(raw);
             cpu->ir.imm = IMM_FIELD(raw);
             break;
-        case MOD_DER:
-            cpu->ir.mode = MOD_DER;
+        case MOD_TRI:
+            cpu->ir.mode = MOD_TRI;
             cpu->ir.opcode = OP_FIELD(raw);
             cpu->ir.reg1 = REG1_FIELD(raw);
             cpu->ir.reg2 = REG2_FIELD(raw);
+            cpu->ir.reg3 = REG3_FIELD(raw);
             break;
         case MOD_OFS:
             cpu->ir.mode = MOD_OFS;
@@ -120,34 +122,49 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
     }
     uint8_t reg1_index = cpu->ir.reg1;
     uint8_t reg2_index = cpu->ir.reg2;
+    uint8_t reg3_index = cpu->ir.reg3;
     uint16_t* reg1_ptr = locate_reg(cpu,reg1_index);
     uint16_t* reg2_ptr = locate_reg(cpu,reg2_index);
+    uint16_t* reg3_ptr = locate_reg(cpu,reg3_index);
     uint8_t* addr_ptr = locate_add(mem, *reg2_ptr);
     uint16_t imm = cpu->ir.imm;
     uint16_t offset = cpu->ir.offset;
 
     switch(cpu->ir.opcode){
         case LD:
-            write_reg(cpu,reg1_ptr,addr_ptr + offset,WORD);
+            write_reg(reg1_ptr,addr_ptr + offset,WORD);
             break;
         case LDB:
-            write_reg(cpu,reg1_ptr,addr_ptr + offset,HWORD);
+            write_reg(reg1_ptr,addr_ptr + offset,HWORD);
             break;
         case STR:
-            write_mem(mem,addr_ptr+ offset,reg1_ptr,WORD);
+            write_mem(addr_ptr+ offset,reg1_ptr,WORD);
             break;
         case STRB:
-            write_mem(mem,addr_ptr + offset,reg1_ptr,HWORD);
+            write_mem(addr_ptr + offset,reg1_ptr,HWORD);
             break;
         case MOV:
-            write_reg(cpu, reg1_ptr, reg2_ptr, WORD);
+            write_reg(reg1_ptr, reg2_ptr, WORD);
             break;
         case MOVI:
-            write_reg(cpu, reg1_ptr, &imm,WORD);
+            write_reg(reg1_ptr, &imm,WORD);
             break;
-
+        /*---------------------------------------------*/
         case ADD:
-            
+            addition_reg(reg1_ptr, reg2_ptr);
+            break;
+        case ADDI:
+            addition_reg(reg1_ptr, &imm);
+            break;
+        case SUB:
+            subtraction_reg(reg1_ptr, reg2_ptr);
+            break;
+        case SUBI:
+            subtraction_reg(reg1_ptr, &imm);
+            break;
+        /*---------------------------------------------*/
+        case AND:
+
             break;
     }
     return;
@@ -185,8 +202,8 @@ uint16_t* locate_reg(CPU* cpu,uint8_t reg){
 uint8_t* locate_add(MemByte* mem,uint16_t add_val){
     return &mem[add_val];
 }
-void write_reg(CPU* cpu,uint16_t* dest_ptr,void* src_ptr,size_t N){
-    if(!cpu || !src_ptr){
+void write_reg(uint16_t* dest_ptr,void* src_ptr,size_t N){
+    if (!src_ptr){
         return;
     }
     memcpy(dest_ptr, src_ptr, N);
@@ -195,14 +212,20 @@ void write_reg(CPU* cpu,uint16_t* dest_ptr,void* src_ptr,size_t N){
 }
 
 
-void write_mem(MemByte* mem, uint8_t* dest_addr,void* src_add,size_t N){
-    if(!mem || !src_add) {
+void write_mem(uint8_t* dest_addr,void* src_add,size_t N){
+    if(!src_add) {
         return;
     }
     memcpy(dest_addr,src_add,N);
     return;
 }
 
+void addition_reg(uint16_t* dest_reg,uint16_t* src_reg){
+    *dest_reg += *src_reg;
+}
+void subtraction_reg(uint16_t* dest_reg,uint16_t* src_reg){
+    *dest_reg -= *src_reg;
+}
 
 
 uint32_t encoder_modR(uint8_t op,uint8_t reg1,uint8_t reg2){
@@ -220,19 +243,20 @@ uint32_t encoder_modI(uint8_t op,uint8_t reg1,uint16_t imm){
     return inst;
 
 }
-uint32_t encoder_modD(uint8_t op,uint8_t reg1,uint8_t reg2){
-    uint32_t inst = ((uint32_t)(op) << 26)      | 
-                    ((uint32_t)(MOD_DER) << 24) |
-                    ((uint32_t)(reg1) << 20)    |
-                    ((uint32_t)(reg2) << 16) ;
-    return inst;
-}
 uint32_t encoder_modO(uint8_t op,uint8_t reg1,uint8_t reg2,uint16_t ofs){
     uint32_t inst = ((uint32_t)(op) << 26)      | 
                     ((uint32_t)(MOD_OFS) << 24) |
                     ((uint32_t)(reg1) << 20)    |
                     ((uint32_t)(reg2) << 16)    |
                     ((uint32_t)(ofs) << 0) ;
+    return inst;
+}
+uint32_t encoder_modT(uint8_t op,uint8_t reg1,uint8_t reg2,uint8_t reg3){
+    uint32_t inst = ((uint32_t)(op) << 26)      | 
+                    ((uint32_t)(MOD_TRI) << 24) |
+                    ((uint32_t)(reg1) << 20)    |
+                    ((uint32_t)(reg2) << 16)    |
+                    ((uint32_t)(reg3) << 12) ;
     return inst;
 }
 
