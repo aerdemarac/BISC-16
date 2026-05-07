@@ -6,26 +6,30 @@
 
 struct Instruction{
     uint32_t raw;
+    uint16_t imm;
+    uint16_t offset;
     uint8_t opcode;
     uint8_t mode;
-    uint16_t imm;
     uint8_t reg1;
     uint8_t reg2;
-    uint16_t offset;
     uint8_t reg3;
 };
 
 struct CPU{
+    Instruction ir;
     uint16_t gp_regs[8];
     uint16_t pc;
     uint16_t bp;
     uint16_t sp;
     uint16_t udp;
-    Instruction ir;
-    uint16_t  flags;
+    uint16_t flags; 
 };
 
+/* Flags Register is kept 16 bits long in order to
+ * keep "locate_reg()" method standardized for 
+ * all registers*/
 
+int RUN = 1;
 
 CPU* cpu_init(void){
     CPU* cpu = malloc(sizeof(CPU));
@@ -82,6 +86,7 @@ void decode(CPU* cpu){
     if(!cpu){
         return;
     }
+    clear_decoded_fields(cpu);
     uint32_t raw = cpu->ir.raw;
     uint8_t mode = MOD_FIELD(raw);
 
@@ -129,43 +134,226 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
     uint8_t* addr_ptr = locate_add(mem, *reg2_ptr);
     uint16_t imm = cpu->ir.imm;
     uint16_t offset = cpu->ir.offset;
+    uint16_t shift_reg = *reg2_ptr & 0x0F; // Masking to keep shift value the maximum 15 
+    uint16_t shift_imm = imm & 0x0F; // shift by immediate value max 15
+    uint16_t reg1_inital = *reg1_ptr;
+    uint16_t br_condition = reg1_index;
+    uint16_t temp = 0;
 
     switch(cpu->ir.opcode){
-        case LD:
-            write_reg(reg1_ptr,addr_ptr + offset,WORD);
+        case LD: // Mode : 2
+            memcpy(reg1_ptr,addr_ptr + offset,WORD);
             break;
-        case LDB:
-            write_reg(reg1_ptr,addr_ptr + offset,HWORD);
+        case LDB: // Mode : 2
+            memcpy(reg1_ptr,addr_ptr + offset,HWORD);
             break;
-        case STR:
-            write_mem(addr_ptr+ offset,reg1_ptr,WORD);
+        case STR: // Mode : 2
+            memcpy(addr_ptr+ offset,reg1_ptr,WORD);
             break;
-        case STRB:
-            write_mem(addr_ptr + offset,reg1_ptr,HWORD);
+        case STRB: // Mode : 2
+            memcpy(addr_ptr + offset,reg1_ptr,HWORD);
             break;
-        case MOV:
-            write_reg(reg1_ptr, reg2_ptr, WORD);
+        case MOV: // Mode : 0
+            memcpy(reg1_ptr, reg2_ptr, WORD);
             break;
-        case MOVI:
-            write_reg(reg1_ptr, &imm,WORD);
-            break;
-        /*---------------------------------------------*/
-        case ADD:
-            addition_reg(reg1_ptr, reg2_ptr);
-            break;
-        case ADDI:
-            addition_reg(reg1_ptr, &imm);
-            break;
-        case SUB:
-            subtraction_reg(reg1_ptr, reg2_ptr);
-            break;
-        case SUBI:
-            subtraction_reg(reg1_ptr, &imm);
+        case MOVI: // Mode : 1
+            memcpy(reg1_ptr, &imm,WORD);
             break;
         /*---------------------------------------------*/
-        case AND:
+        case ADD: // Mode : 0
+            *reg1_ptr += *reg2_ptr;
+
+            (*reg2_ptr && *reg1_ptr <= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
+            break;
+        case ADDI: // Mode : 1
+            *reg1_ptr += imm;
+
+            (imm && *reg1_ptr <= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
+            break;
+        case ADDS: // Mode : 3
+            *reg1_ptr = *reg2_ptr + *reg3_ptr;
+
+            (*reg1_ptr <= *reg2_ptr)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
+            break;
+        case SUB: // Mode : 0
+            *reg1_ptr -= *reg2_ptr;
+
+            (*reg2_ptr && *reg1_ptr >= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ;
+            break;
+        case SUBI: // Mode : 1
+            *reg1_ptr -= imm;
+
+            (imm && *reg1_ptr >= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ;
+            break;
+        case SUBS: // Mode : 3
+            *reg1_ptr = *reg2_ptr - *reg3_ptr;
+
+            (*reg1_ptr >= *reg2_ptr)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
+            break;
+        /*---------------------------------------------*/
+        case AND: // Mode : 2
+            *reg1_ptr = *reg2_ptr & *reg3_ptr;
+            break;
+        case ANDI: // Mode : 2
+            *reg1_ptr = *reg2_ptr & offset;
 
             break;
+        case OR: // Mode : 3
+            *reg1_ptr = *reg2_ptr | *reg3_ptr;
+
+            break;
+        case ORI: // Mode : 2
+            *reg1_ptr = *reg2_ptr | offset;
+
+            break;
+        case ZOR: // Mode : 3
+            *reg1_ptr = *reg2_ptr ^ *reg3_ptr;
+            break;
+        case ZORI: // Mode : 2
+            *reg1_ptr = *reg2_ptr ^ offset;
+
+            break;
+        case CMP: // Mode : 0
+            if(*reg1_ptr > *reg2_ptr){
+                SET_BIT(cpu->flags, FL_CARRY);
+                CLEAR_BIT(cpu->flags,FL_ZERO);
+            }
+            else if(*reg1_ptr == *reg2_ptr){
+                SET_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            else{
+                CLEAR_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            break;
+        case CMPI: // Mode : 1
+            if(*reg1_ptr > imm){
+                SET_BIT(cpu->flags, FL_CARRY);
+                CLEAR_BIT(cpu->flags,FL_ZERO);
+            }
+            else if(*reg1_ptr == imm){
+                SET_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            else{
+                CLEAR_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            break;
+        case CMPW : // Mode: 2
+            memcpy(&temp, addr_ptr + offset, WORD);
+            if(*reg1_ptr > temp){
+                SET_BIT(cpu->flags, FL_CARRY);
+                CLEAR_BIT(cpu->flags,FL_ZERO);
+            }
+            else if(*reg1_ptr == temp){
+                SET_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            else{
+                CLEAR_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            break;
+        case CMPH:  // Mode: 2
+            memcpy(&temp, addr_ptr + offset, HWORD);
+            if(*reg1_ptr > temp){
+                SET_BIT(cpu->flags, FL_CARRY);
+                CLEAR_BIT(cpu->flags,FL_ZERO);
+            }
+            else if(*reg1_ptr == temp){
+                SET_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            else{
+                CLEAR_BIT(cpu->flags, FL_ZERO);
+                CLEAR_BIT(cpu->flags, FL_CARRY);
+            }
+            break;
+        case SR: // Mode : 0
+            *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_reg); //Odd syntax in order to supress strict compiler warning
+
+            (*reg2_ptr && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
+            break;
+        case SRI: // Mode : 1
+            *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_imm);
+
+            (imm && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
+            break;
+        case SL: // Mode : 0
+            *reg1_ptr = (uint16_t)(*reg1_ptr << shift_reg);
+
+            (*reg2_ptr && reg1_inital >> 15 & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
+            break;
+        case SLI: // Mode : 1
+            *reg1_ptr = (uint16_t)(*reg1_ptr << shift_imm);
+
+            (imm && reg1_inital >> 15 & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
+            break;
+        /*---------------------------------------------*/
+        case JMP:    // Mode : 1
+            cpu->pc = imm;
+            break;
+        case BRC:    // Mode : 1
+            switch (br_condition) {
+               case CON_NON_ZERO:
+                   if(!MASK_BIT(cpu->flags,FL_ZERO)){
+                       temp = 1;
+                   }
+                   break;
+               case CON_ZERO:
+                   if(MASK_BIT(cpu->flags,FL_ZERO)){
+                       temp = 1;
+                   }
+                   break;
+               case CON_CARRY_CLEAR:
+                   if(!MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                       temp = 1;
+                   }
+                   break;
+               case CON_CARRY_SET:
+                   if(MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                       temp = 1;
+                   }
+                   break;
+               case CON_POSITIVE:
+                   if(!MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                       temp = 1;
+                   }
+                   break;
+               case CON_NEGATIVE:
+                   if(MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                       temp = 1;
+                   }
+                   break;
+            }
+
+            if(temp){ // Temp Used as a boolean val in order to determine jump
+                cpu->pc = imm;
+            }
+            break;
+        case CALL: // Mode : 0
+            break;
+        case RET:  // Mode : 0
+            break;
+        case PUSH:  // Mode : 0
+            break;
+        case POP:  // Mode : 0
+            break;
+        case NOP:  // Mode : 0
+           // No Operation
+            break;
+        case KILL:  // Mode : 0
+            RUN = 0;
+            break;
+        default:
+            break;
+    }
+    // Generic-Flag Checks Exc. CMP*
+    if(cpu->ir.opcode > 6 && (cpu->ir.opcode < 19 || cpu->ir.opcode > 21) ){
+        (*reg1_ptr == 0)? SET_BIT(cpu->flags,FL_ZERO) : CLEAR_BIT(cpu->flags,FL_ZERO) ;
+        (*reg1_ptr & SIGN_BIT)? SET_BIT(cpu->flags, FL_NEGATIVE) : CLEAR_BIT(cpu->flags, FL_NEGATIVE) ;
     }
     return;
 }
@@ -202,31 +390,6 @@ uint16_t* locate_reg(CPU* cpu,uint8_t reg){
 uint8_t* locate_add(MemByte* mem,uint16_t add_val){
     return &mem[add_val];
 }
-void write_reg(uint16_t* dest_ptr,void* src_ptr,size_t N){
-    if (!src_ptr){
-        return;
-    }
-    memcpy(dest_ptr, src_ptr, N);
-    return;
-
-}
-
-
-void write_mem(uint8_t* dest_addr,void* src_add,size_t N){
-    if(!src_add) {
-        return;
-    }
-    memcpy(dest_addr,src_add,N);
-    return;
-}
-
-void addition_reg(uint16_t* dest_reg,uint16_t* src_reg){
-    *dest_reg += *src_reg;
-}
-void subtraction_reg(uint16_t* dest_reg,uint16_t* src_reg){
-    *dest_reg -= *src_reg;
-}
-
 
 uint32_t encoder_modR(uint8_t op,uint8_t reg1,uint8_t reg2){
     uint32_t inst = ((uint32_t)(op) << 26)      | 
@@ -258,6 +421,20 @@ uint32_t encoder_modT(uint8_t op,uint8_t reg1,uint8_t reg2,uint8_t reg3){
                     ((uint32_t)(reg2) << 16)    |
                     ((uint32_t)(reg3) << 12) ;
     return inst;
+}
+
+void clear_decoded_fields(CPU* cpu){
+    if(!cpu){
+        return;
+    }
+    cpu->ir.imm = 0;
+    cpu->ir.offset = 0;
+    cpu->ir.opcode = 0;
+    cpu->ir.mode = 0;
+    cpu->ir.reg1 = 0;
+    cpu->ir.reg2 = 0;
+    cpu->ir.reg3 = 0;
+    return;
 }
 
 /*---------------------LEGACY------------------*/
