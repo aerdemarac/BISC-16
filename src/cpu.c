@@ -132,6 +132,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
     uint16_t* reg2_ptr = locate_reg(cpu,reg2_index);
     uint16_t* reg3_ptr = locate_reg(cpu,reg3_index);
     uint8_t* addr_ptr = locate_add(mem, *reg2_ptr);
+    uint8_t* sp_addr = locate_add(mem, cpu->sp);
     uint16_t imm = cpu->ir.imm;
     uint16_t offset = cpu->ir.offset;
     uint16_t shift_reg = *reg2_ptr & 0x0F; // Masking to keep shift value the maximum 15 
@@ -141,79 +142,79 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
     uint16_t temp = 0;
 
     switch(cpu->ir.opcode){
-        case LD: // Mode : 2
+        case OP_LD: // Mode : 2
             memcpy(reg1_ptr,addr_ptr + offset,WORD);
             break;
-        case LDB: // Mode : 2
+        case OP_LDB: // Mode : 2
             memcpy(reg1_ptr,addr_ptr + offset,HWORD);
             break;
-        case STR: // Mode : 2
+        case OP_STR: // Mode : 2
             memcpy(addr_ptr+ offset,reg1_ptr,WORD);
             break;
-        case STRB: // Mode : 2
+        case OP_STRB: // Mode : 2
             memcpy(addr_ptr + offset,reg1_ptr,HWORD);
             break;
-        case MOV: // Mode : 0
+        case OP_MOV: // Mode : 0
             memcpy(reg1_ptr, reg2_ptr, WORD);
             break;
-        case MOVI: // Mode : 1
+        case OP_MOVI: // Mode : 1
             memcpy(reg1_ptr, &imm,WORD);
             break;
         /*---------------------------------------------*/
-        case ADD: // Mode : 0
+        case OP_ADD: // Mode : 0
             *reg1_ptr += *reg2_ptr;
 
             (*reg2_ptr && *reg1_ptr <= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
             break;
-        case ADDI: // Mode : 1
+        case OP_ADDI: // Mode : 1
             *reg1_ptr += imm;
 
             (imm && *reg1_ptr <= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
             break;
-        case ADDS: // Mode : 3
+        case OP_ADDS: // Mode : 3
             *reg1_ptr = *reg2_ptr + *reg3_ptr;
 
             (*reg1_ptr <= *reg2_ptr)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
             break;
-        case SUB: // Mode : 0
+        case OP_SUB: // Mode : 0
             *reg1_ptr -= *reg2_ptr;
 
             (*reg2_ptr && *reg1_ptr >= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ;
             break;
-        case SUBI: // Mode : 1
+        case OP_SUBI: // Mode : 1
             *reg1_ptr -= imm;
 
             (imm && *reg1_ptr >= reg1_inital)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ;
             break;
-        case SUBS: // Mode : 3
+        case OP_SUBS: // Mode : 3
             *reg1_ptr = *reg2_ptr - *reg3_ptr;
 
             (*reg1_ptr >= *reg2_ptr)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags, FL_CARRY) ;
             break;
         /*---------------------------------------------*/
-        case AND: // Mode : 2
+        case OP_AND: // Mode : 2
             *reg1_ptr = *reg2_ptr & *reg3_ptr;
             break;
-        case ANDI: // Mode : 2
+        case OP_ANDI: // Mode : 2
             *reg1_ptr = *reg2_ptr & offset;
 
             break;
-        case OR: // Mode : 3
+        case OP_OR: // Mode : 3
             *reg1_ptr = *reg2_ptr | *reg3_ptr;
 
             break;
-        case ORI: // Mode : 2
+        case OP_ORI: // Mode : 2
             *reg1_ptr = *reg2_ptr | offset;
 
             break;
-        case ZOR: // Mode : 3
+        case OP_ZOR: // Mode : 3
             *reg1_ptr = *reg2_ptr ^ *reg3_ptr;
             break;
-        case ZORI: // Mode : 2
+        case OP_ZORI: // Mode : 2
             *reg1_ptr = *reg2_ptr ^ offset;
 
             break;
-        case CMP: // Mode : 0
+        case OP_CMP: // Mode : 0
             if(*reg1_ptr > *reg2_ptr){
                 SET_BIT(cpu->flags, FL_CARRY);
                 CLEAR_BIT(cpu->flags,FL_ZERO);
@@ -227,7 +228,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                 CLEAR_BIT(cpu->flags, FL_CARRY);
             }
             break;
-        case CMPI: // Mode : 1
+        case OP_CMPI: // Mode : 1
             if(*reg1_ptr > imm){
                 SET_BIT(cpu->flags, FL_CARRY);
                 CLEAR_BIT(cpu->flags,FL_ZERO);
@@ -241,7 +242,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                 CLEAR_BIT(cpu->flags, FL_CARRY);
             }
             break;
-        case CMPW : // Mode: 2
+        case OP_CMPW : // Mode: 2
             memcpy(&temp, addr_ptr + offset, WORD);
             if(*reg1_ptr > temp){
                 SET_BIT(cpu->flags, FL_CARRY);
@@ -256,7 +257,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                 CLEAR_BIT(cpu->flags, FL_CARRY);
             }
             break;
-        case CMPH:  // Mode: 2
+        case OP_CMPH:  // Mode: 2
             memcpy(&temp, addr_ptr + offset, HWORD);
             if(*reg1_ptr > temp){
                 SET_BIT(cpu->flags, FL_CARRY);
@@ -271,31 +272,31 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                 CLEAR_BIT(cpu->flags, FL_CARRY);
             }
             break;
-        case SR: // Mode : 0
+        case OP_SR: // Mode : 0
             *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_reg); //Odd syntax in order to supress strict compiler warning
 
             (*reg2_ptr && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
-        case SRI: // Mode : 1
+        case OP_SRI: // Mode : 1
             *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_imm);
 
             (imm && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
-        case SL: // Mode : 0
+        case OP_SL: // Mode : 0
             *reg1_ptr = (uint16_t)(*reg1_ptr << shift_reg);
 
             (*reg2_ptr && reg1_inital >> 15 & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
-        case SLI: // Mode : 1
+        case OP_SLI: // Mode : 1
             *reg1_ptr = (uint16_t)(*reg1_ptr << shift_imm);
 
             (imm && reg1_inital >> 15 & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
         /*---------------------------------------------*/
-        case JMP:    // Mode : 1
+        case OP_JMP:    // Mode : 1
             cpu->pc = imm;
             break;
-        case BRC:    // Mode : 1
+        case OP_BRC:    // Mode : 1
             switch (br_condition) {
                case CON_NON_ZERO:
                    if(!MASK_BIT(cpu->flags,FL_ZERO)){
@@ -333,20 +334,31 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                 cpu->pc = imm;
             }
             break;
-        case CALL: // Mode : 0
+        case OP_CALL: // Mode : 1
+            cpu->sp -= WORD;
+            sp_addr = locate_add(mem, cpu->sp); //Needs to be updated 
+            memcpy(sp_addr,&cpu->pc, WORD);
+            cpu->pc = imm;
             break;
-        case RET:  // Mode : 0
+        case OP_RET:  // Mode : 0
+            sp_addr = locate_add(mem, cpu->sp); //Needs to be updated 
+            memcpy(&cpu->pc,sp_addr,WORD);
+            memset(sp_addr,0,WORD);
+            cpu->sp += WORD;
             break;
-        case PUSH:  // Mode : 0
-            break;
-        case POP:  // Mode : 0
-            break;
-        case NOP:  // Mode : 0
+        case OP_NOP:  // Mode : 0
            // No Operation
             break;
-        case KILL:  // Mode : 0
+        case OP_KILL:  // Mode : 0
             RUN = 0;
             break;
+        case OP_SYSCALL:
+            switch (reg1_index) {
+                case SYS_PUTCHAR:
+                    putchar((char)(*reg2_ptr));
+                    break;
+                // Functionalty will be expanded
+            }
         default:
             break;
     }

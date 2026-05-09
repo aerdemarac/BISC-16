@@ -1,6 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifndef CPU_H
+#define CPU_H
+
 /*4b-opcode + 2b-mode determines the instruction format
  *Mod Values: R=> 0 , I=> 1 , D=>2 , O=>3;
  * */
@@ -69,44 +72,43 @@
 
 
 /*   Unique Instruction Identifier opcode + mode */
-#define LD   0U      // Mode: 2    // Tested      
-#define LDB  1U      // Mode: 2    // Tested      
-#define STR  2U      // Mode: 2    // Tested      
-#define STRB 3U      // Mode: 2    // Tested      
-#define MOV  4U      // Mode: 0    // Tested      
-#define MOVI 5U      // Mode: 1    // Tested      
+#define OP_LD   0U      // Mode: 2    
+#define OP_LDB  1U      // Mode: 2    
+#define OP_STR  2U      // Mode: 2    
+#define OP_STRB 3U      // Mode: 2    
+#define OP_MOV  4U      // Mode: 0    
+#define OP_MOVI 5U      // Mode: 1    
 
-#define ADD  6U      // Mode: 0    // Tested
-#define ADDI 7U      // Mode: 1    // Tested     
-#define ADDS 8U      // Mode: 3    // Tested     
-#define SUB  9U      // Mode: 0    // Tested     
-#define SUBI 10U     // Mode: 1    // Tested     
-#define SUBS 11U     // Mode: 3    // Tested     
-                                   
-#define AND  12U     // Mode: 3    // Tested   
-#define ANDI 13U     // Mode: 2    // Tested   
-#define OR   14U     // Mode: 3    // Tested   
-#define ORI  15U     // Mode: 2    // Tested   
-#define ZOR  16U     // Mode: 3    // Tested   
-#define ZORI 17U     // Mode: 2    // Tested   
-#define CMP  18U     // Mode: 0       
-#define CMPI 19U     // Mode: 1    // Tested   
-#define CMPW 20U     // Mode: 2    
-#define CMPH 21U     // Mode: 2    
-#define SR   22U     // Mode: 0    // Tested   
-#define SRI  23U     // Mode: 1    // Tested   
-#define SL   24U     // Mode: 0    // Tested   
-#define SLI  25U     // Mode: 1    // Tested   
+#define OP_ADD  6U      // Mode: 0    
+#define OP_ADDI 7U      // Mode: 1    
+#define OP_ADDS 8U      // Mode: 3    
+#define OP_SUB  9U      // Mode: 0    
+#define OP_SUBI 10U     // Mode: 1    
+#define OP_SUBS 11U     // Mode: 3    
 
-#define JMP  26U     // Mode: 1      
-#define BRC  27U     // Mode: 1      
-#define CALL 28U     // Mode: 0      
-#define RET  29U     // Mode: 0      
-#define PUSH 30U     // Mode: 0      
-#define POP  31U     // Mode: 0      
-#define NOP  32U     // Mode: 0      
+#define OP_AND  12U     // Mode: 3    
+#define OP_ANDI 13U     // Mode: 2    
+#define OP_OR   14U     // Mode: 3    
+#define OP_ORI  15U     // Mode: 2    
+#define OP_ZOR  16U     // Mode: 3    
+#define OP_ZORI 17U     // Mode: 2    
+#define OP_CMP  18U     // Mode: 0    
+#define OP_CMPI 19U     // Mode: 1    
+#define OP_CMPW 20U     // Mode: 2    
+#define OP_CMPH 21U     // Mode: 2    
+#define OP_SR   22U     // Mode: 0    
+#define OP_SRI  23U     // Mode: 1    
+#define OP_SL   24U     // Mode: 0    
+#define OP_SLI  25U     // Mode: 1    
 
-#define KILL 33U     // Mode: 0
+#define OP_JMP  26U     // Mode: 1      
+#define OP_BRC  27U     // Mode: 1      
+#define OP_CALL 28U     // Mode: 1      
+#define OP_RET  29U     // Mode: 0      
+#define OP_NOP  30U     // Mode: 0      
+
+#define OP_KILL 31U     // Mode: 0
+#define OP_SYSCALL 32U     // Mode: 0
 
 /*       Memory Mapping - Boundaries      */
 #define MEM_SIZE    65536U
@@ -117,6 +119,9 @@
 #define STACK_MIN   64512U
 #define STACK_MAX   65535U
 
+/* System-Call Functionalities*/
+#define SYS_PUTCHAR 0U
+// Functionalty will be expanded
 
 typedef struct CPU CPU;
 typedef struct Instruction Instruction;
@@ -146,3 +151,4 @@ void clear_decoded_fields(CPU* cpu);
 uint8_t* read_mem_hword(MemByte* mem,uint16_t mem_addr); // LEGACY
 uint16_t* read_mem_word(MemByte* mem,uint16_t mem_addr); // LEGACY
 /*---------------------------------------------------------------*/
+#endif

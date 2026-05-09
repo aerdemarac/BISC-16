@@ -1,3 +1,10 @@
+![Banner](https://i.imgur.com/xBsJH2F.png)
+![C](https://img.shields.io/badge/language-C-blue)
+![Standard](https://img.shields.io/badge/ISO-C99-green)
+![MIT](https://img.shields.io/badge/license-MIT-yellow)
+
+
+
 # BISC-16
 
 ## Overview
@@ -71,3 +78,4 @@ This project is currently in active development. The instruction set, memory mod
 BISC-16 deliberately avoids relying on external toolchains or compiler assumptions. The system is being built from the ground up to reflect a clean and explicit hardware model where every operation is defined at the ISA level.
 
 ---
+
