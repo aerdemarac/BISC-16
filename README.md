@@ -67,15 +67,21 @@ BISC-16 is not designed to compete with modern ISAs or production systems. Inste
 
 ---
 
-## Status
 
-This project is currently in active development. The instruction set, memory model, and execution rules are still subject to change as the architecture evolves.
+## TODO
+
+- Ability to fetch code from ROM files
+- Full Assembler
+- Couple of demo ROMs
+- Extensive SysCall capabilites
+- Comperhensive CPU documentation
 
 ---
 
-## Notes
-
-BISC-16 deliberately avoids relying on external toolchains or compiler assumptions. The system is being built from the ground up to reflect a clean and explicit hardware model where every operation is defined at the ISA level.
-
----
+## Documents Consumed During Development
+- https://www.zilog.com/docs/z80/um0080.pdf
+- http://retro.hansotten.nl/uploads/books/6502UsersManual.pdf
+- https://icourse.club/uploads/files/a9710bf2454961912f79d89b25ba33c4841f6c24.pdf
+- https://deramp.com/downloads/intel/8080%20Data%20Sheet.pdf
+- https://rohan-sharma.de/blog/32-bit-cpu/
 

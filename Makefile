@@ -1,5 +1,5 @@
 CC = gcc
-APP_SRC = src/cpu.c src/cycle.c include/cpu.h
+APP_SRC = src/cpu.c src/cycle.c include/cpu.h include/qencode.h
 CFLAGS = -fsanitize=address,undefined -fno-sanitize=leak -fno-omit-frame-pointer -g -std=c99 -Wall -Wextra  -pedantic -Iinclude
 
 test: $(APP_SRC)
