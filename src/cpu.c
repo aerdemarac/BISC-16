@@ -309,12 +309,12 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                    }
                    break;
                case CON_CARRY_CLEAR:
-                   if(!MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                   if(!MASK_BIT(cpu->flags,FL_CARRY)){
                        temp = 1;
                    }
                    break;
                case CON_CARRY_SET:
-                   if(MASK_BIT(cpu->flags,FL_NEGATIVE)){
+                   if(MASK_BIT(cpu->flags,FL_CARRY)){
                        temp = 1;
                    }
                    break;
