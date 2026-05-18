@@ -1,4 +1,4 @@
-![Banner](https://i.imgur.com/xBsJH2F.png)
+![Banner](https://i.imgur.com/8d3Yo3X.png)
 ![C](https://img.shields.io/badge/language-C-blue)
 ![Standard](https://img.shields.io/badge/ISO-C99-green)
 ![MIT](https://img.shields.io/badge/license-MIT-yellow)

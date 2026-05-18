@@ -12,10 +12,9 @@ int main(void){
      * Quick Encoder Macros can be used for quick code generation as seen below
     */
     uint32_t rom[] = { 
-            0,
-            //MOVI(GP0,65),
-            //SYSCALL(SYS_PUTCHAR,GP0),
-            //KILL(),   
+        MOVI(GP0,'N'),
+        SYSCALL(SYS_PUTCHAR,UDP),
+        KILL(),   
     };
 
     size_t rom_size = sizeof(rom) / sizeof(rom[0]);

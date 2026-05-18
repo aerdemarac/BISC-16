@@ -335,12 +335,18 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
             }
             break;
         case OP_CALL: // Mode : 1
+            if((cpu->sp - WORD) < STACK_MIN){ // Prevent Overflow
+                break;
+            }
             cpu->sp -= WORD;
             sp_addr = locate_add(mem, cpu->sp); //Needs to be updated 
             memcpy(sp_addr,&cpu->pc, WORD);
             cpu->pc = imm;
             break;
         case OP_RET:  // Mode : 0
+            if((cpu->sp + WORD) > STACK_MAX){
+                break;
+            }
             sp_addr = locate_add(mem, cpu->sp); //Needs to be updated 
             memcpy(&cpu->pc,sp_addr,WORD);
             memset(sp_addr,0,WORD);
@@ -356,6 +362,12 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
             switch (reg1_index) {
                 case SYS_PUTCHAR:
                     putchar((char)(*reg2_ptr));
+                    break;
+                case SYS_PUTS:
+                    puts((const char*)(addr_ptr));
+                    break;
+                case SYS_CLEAR:
+                    //Will be implemented
                     break;
                 // Functionalty will be expanded
             }
@@ -448,20 +460,3 @@ void clear_decoded_fields(CPU* cpu){
     cpu->ir.reg3 = 0;
     return;
 }
-
-/*---------------------LEGACY------------------*/
-uint8_t* read_mem_hword(MemByte* mem,uint16_t mem_addr){ 
-    if(!mem){
-        return NULL;
-    }
-    return &mem[mem_addr];
-}
-uint16_t* read_mem_word(MemByte* mem,uint16_t mem_addr){
-    if(!mem){
-        return NULL;
-    }
-    static uint16_t val = 0;
-    memcpy(&val, &mem[mem_addr],WORD); // Reading WORD size data from byte addressed mem requires this call
-    return &val;
-}
-/*-------------------LEGACY--------------*/

@@ -15,10 +15,10 @@
 #define CLEAR_FL(flags) (flags &= 0x0U)
 
 /*      Size Identifiers in Bytes   */
-#define QWORD 8
-#define DWORD 4
-#define WORD  2
-#define HWORD 1
+#define QWORD 8U
+#define DWORD 4U
+#define WORD  2U
+#define HWORD 1U
 
 /*         Register-Macros           */
 #define GP0 0U
@@ -121,6 +121,8 @@
 
 /* System-Call Functionalities*/
 #define SYS_PUTCHAR 0U
+#define SYS_PUTS 1U
+#define SYS_CLEAR 2U
 // Functionalty will be expanded
 
 typedef struct CPU CPU;
