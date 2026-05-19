@@ -5,11 +5,11 @@
 
 
 
-# BISC-16
+# BISC-16 | RISC-Style ISA & Deterministic CPU Design
 
 ## Overview
 
-**BISC-16** is an under-development 16-bit CPU architecture project designed for educational and systems-level experimentation. The goal of this project is to build a minimal but expressive processor model that helps explore how real hardware concepts such as instruction execution, memory organization, and register design work at a fundamental level.
+**BISC-16**, an 16-bit CPU architecture project designed for educational and systems-level experimentation. The goal of this project is to build a minimal but expressive processor model that helps explore how real hardware concepts such as instruction execution, memory organization, and register design work at a fundamental level.
 
 This project intentionally avoids high-level abstractions like toolchains or compiler assumptions, focusing instead on raw instruction semantics and memory behavior.
 
@@ -20,16 +20,13 @@ This project intentionally avoids high-level abstractions like toolchains or com
 BISC-16 is built around a few core principles:
 
 - **Simplicity over complexity**
-  The architecture is intentionally minimal to make every hardware decision visible and understandable.
+  With the help of RISC-style instruction-set and clean CPU design, every aspect of BISC-16 pretty simple and predictable  
 
 - **Deterministic execution**
   Every instruction has a clearly defined behavior without hidden side effects.
 
-- **Low-level transparency**
-  The CPU does not interpret memory as “code” or “data”; it only sees addresses and instructions.
-
-- **Educational focus**
-  The design is meant to demonstrate how real CPU concepts emerge from basic building blocks.
+- **Nothing more than a CPU**
+  BISC-16 is never meant to produce fully graphical outputs therefore not equipped with Graphical Libs, ABIs or Wrapper Units, in order to comply plain CPU and ISA design philosophy
 
 ---
 
@@ -39,36 +36,57 @@ The CPU operates on a classic cycle:
 
 Fetch → Decode → Execute → Repeat
 
-This cycle forms the foundation of all instruction processing in the architecture.
+---
+
+## Registers Model
+
+BISC-16 equipped with 8 general, 5 special purpose registers:
+
+- **8 General Purpose Registers** =>                (uint16_t[]) 
+- **Program Counter(PC)**  =>                       (uint16_t)
+- **Stack Base Pointer(BP) , Stack Pointer(SP)** => (uint16_t)
+- **User Data Pointer (UDP)** =>                    (uint16_t)
+- **Flags Register (FL)** =>                        (uint16_t)
+
+UDP is a special register that retains the memory address to manually managed section where program data stored such as variables,strings etc.
 
 ---
 
 ## Memory Model
 
-The memory space is logically divided into:
+The 64KB memory space is logically divided into:
 
-- Program section (instruction memory)
-- General-purpose memory region
-- Stack region (manually managed, grows downward)
+- **Program section** (.text Equvilant) =>                                    [0d00000 - 0d05119]
+- **General-purpose memory region** (Manually Managed Program Data Section => [0d05120 - 0d64511]
+- **Stack region** (Grows downward) =>                                        [0b64512 - 0b65535]
 
-The CPU does not enforce semantic meaning on memory regions; instead, structure is defined by convention and enforced by software-level discipline.
-
----
-
-## Architectural Intent
-
-BISC-16 is not designed to compete with modern ISAs or production systems. Instead, it serves as a controlled environment to explore:
-
-- Instruction set design trade-offs
-- Register allocation strategies
-- Memory access patterns
-- Stack behavior and calling conventions (at a minimal level)
-- Endianness and data representation at hardware level
+Stack Design is kept simple therefore its only capable of storing return addresses of function calls
 
 ---
 
+## Decoding Modes
 
-## TODO
+BISC-16 is equipped with 4 decoding modes:
+
+- **Mode-R** (Double-Registers Mode) = Used for instructions requires 2 register identifier arguments. e.g. ADD,CMP,MOV 
+- **Mode-I** (Immediate Mode) = Used when instruction operates with 1 register identifier and a 16-Bit immediate value e.g. MOVI,CMPI,SUBI
+- **Mode-O** (Offset Mode) = Mostly used in memory-related operations. Contains a destination register, source address register and an 16-Bit offset value e.g. LD,STR,CMPW
+- **Mode-T** (Tri-Register Mode) = Dedicated to instructions requires 1 destination and 2 operand registers e.g. SUBS, OR, ZOR
+
+---
+
+## Instruction Classes
+
+- **Memory Load-Store Operations** e.g. LDB,STRB
+- **Data Movement on Registers** e.g. MOV,MOVI 
+- **Arithmetic Operations** e.g. SUBI,ADD
+- **Logical Operations** e.g. SR,CMP,OR
+- **Flow Control** e.g. JMP,BRC,RET
+- **System Call** e.g. SYSCALL
+
+---
+
+## TO-DO
 
 - Ability to fetch code from ROM files
 - Full Assembler
@@ -79,6 +97,7 @@ BISC-16 is not designed to compete with modern ISAs or production systems. Inste
 ---
 
 ## Documents Consumed During Development
+- **Established decent understanding of CPU architectures via succesors such as MOS6502, Motorolla 68K, Zilog Z80**
 - https://www.zilog.com/docs/z80/um0080.pdf
 - http://retro.hansotten.nl/uploads/books/6502UsersManual.pdf
 - https://icourse.club/uploads/files/a9710bf2454961912f79d89b25ba33c4841f6c24.pdf
