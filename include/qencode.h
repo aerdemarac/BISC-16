@@ -44,5 +44,11 @@
 #define NOP()                    (encoder_modR(OP_NOP,IGN,IGN))
 
 #define KILL()                   (encoder_modR(OP_KILL,IGN,IGN))
-#define SYSCALL(call,reg2,imm)   (encoder_modO(OP_SYSCALL,call,reg2,imm))
+#define __SYSCALL(call,reg2,imm)   (encoder_modO(OP_SYSCALL,call,reg2,imm))
+
+/* Wrapper SYSCALL Methods */
+#define CALL_PUTCHAR(reg) (__SYSCALL(SYS_PUTCHAR,reg,IGN))
+#define CALL_PUTS(reg) (__SYSCALL(SYS_PUTS,reg,IGN))
+#define CALL_CLEAR() (__SYSCALL(SYS_CLEAR,IGN,IGN))
+#define CALL_SLEEP(ms) (__SYSCALL(SYS_SLEEP,IGN,ms))
 #endif

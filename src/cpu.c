@@ -397,8 +397,8 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
         default:
             break;
     }
-    // Generic-Flag Checks Exc. CMP*
 
+    // Generic-Flag Checks Exc. CMP*
     if(cpu->ir.opcode >= OP_ADD && (cpu->ir.opcode < OP_CMP || cpu->ir.opcode > OP_CMPH) ){ 
         (*reg1_ptr == 0)? SET_BIT(cpu->flags,FL_ZERO) : CLEAR_BIT(cpu->flags,FL_ZERO) ;
         (*reg1_ptr & SIGN_BIT)? SET_BIT(cpu->flags, FL_NEGATIVE) : CLEAR_BIT(cpu->flags, FL_NEGATIVE) ;
