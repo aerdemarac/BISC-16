@@ -22,14 +22,14 @@
 #define SUBI(reg1,imm)           (encoder_modI(OP_SUBI,reg1,imm))
 #define SUBS(reg1,reg2,reg3)     (encoder_modT(OP_SUBS,reg1,reg2,reg3)) 
 
-#define AND(reg1,reg2,reg3)      (encoder_modT(OP_AND,reg1,reg2))
-#define ANDI(reg1,reg2,imm)      (encoder_modO(OP_ANDI,reg1,imm))                                     
-#define OR(reg1,reg2,reg3)       (encoder_modT(OP_OR,reg1,reg2))
-#define ORI(reg1,reg2,imm)       (encoder_modO(OP_ORI,reg1,reg2))
-#define ZOR(reg1,reg2,reg3)      (encoder_modT(OP_ZOR,reg1,reg2))
-#define ZORI(reg1,reg2,imm)      (encoder_modO(OP_ZORI,reg1,imm))                                     
+#define AND(reg1,reg2,reg3)      (encoder_modT(OP_AND,reg1,reg2,reg3))
+#define ANDI(reg1,reg2,imm)      (encoder_modO(OP_ANDI,reg1,reg2,imm))                                     
+#define OR(reg1,reg2,reg3)       (encoder_modT(OP_OR,reg1,reg2,reg3))
+#define ORI(reg1,reg2,imm)       (encoder_modO(OP_ORI,reg1,reg2,imm))
+#define ZOR(reg1,reg2,reg3)      (encoder_modT(OP_ZOR,reg1,reg2,reg3))
+#define ZORI(reg1,reg2,imm)      (encoder_modO(OP_ZORI,reg1,reg2,imm))                                     
 #define CMP(reg1,reg2)           (encoder_modR(OP_CMP,reg1,reg2))
-#define CMPI(reg1,imm)           (encoder_modI(OP_ORI,reg1,imm))
+#define CMPI(reg1,imm)           (encoder_modI(OP_CMPI,reg1,imm))
 #define CMPW(reg1,reg2,offset)   (encoder_modO(OP_CMPW,reg1,reg2,offset))
 #define CMPH(reg1,reg2,offset)   (encoder_modO(OP_CMPH,reg1,reg2,offset))
 #define SR(reg1,reg2)            (encoder_modR(OP_SR,reg1,reg2))
@@ -44,5 +44,5 @@
 #define NOP()                    (encoder_modR(OP_NOP,IGN,IGN))
 
 #define KILL()                   (encoder_modR(OP_KILL,IGN,IGN))
-#define SYSCALL(call,reg2)       (encoder_modR(OP_SYSCALL,call,reg2))
+#define SYSCALL(call,reg2,imm)   (encoder_modO(OP_SYSCALL,call,reg2,imm))
 #endif

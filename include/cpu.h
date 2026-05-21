@@ -108,7 +108,7 @@
 #define OP_NOP  30U     // Mode: 0      
 
 #define OP_KILL 31U     // Mode: 0
-#define OP_SYSCALL 32U     // Mode: 0
+#define OP_SYSCALL 32U     // Mode: 2
 
 /*       Memory Mapping - Boundaries      */
 #define MEM_SIZE    65536U
@@ -123,6 +123,7 @@
 #define SYS_PUTCHAR 0U
 #define SYS_PUTS 1U
 #define SYS_CLEAR 2U
+#define SYS_SLEEP 3U
 // Functionalty will be expanded
 
 typedef struct CPU CPU;

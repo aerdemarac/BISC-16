@@ -11,10 +11,10 @@ int main(void){
     /* ROM storage that contains code to be copied to main memory 
      * Quick Encoder Macros can be used for quick code generation as seen below
     */
-    uint32_t rom[] = { 
-        MOVI(GP0,'N'),
-        SYSCALL(SYS_PUTCHAR,UDP),
-        KILL(),   
+
+    uint32_t rom[] = { // Program Binary Here
+        0, 
+        KILL()
     };
 
     size_t rom_size = sizeof(rom) / sizeof(rom[0]);
