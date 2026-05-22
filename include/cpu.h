@@ -114,7 +114,7 @@
 #define MEM_SIZE    65536U
 #define PROG_MIN    0U
 #define PROG_MAX    5119U
-#define USRDATA_MIN 5120U            // [PROGRAM-Region 5 KB MAX][USER-DATA Region - 58 KB MAX][STACK - 1 KB (- Grow)]
+#define USRDATA_MIN 5120U // [PROGRAM-Region 5 KB MAX][USER-DATA Region - 58 KB MAX][STACK - 1 KB (- Grow)]
 #define USRDATA_MAX 64511U
 #define STACK_MIN   64512U
 #define STACK_MAX   65535U
@@ -124,7 +124,6 @@
 #define SYS_PUTS 1U
 #define SYS_CLEAR 2U
 #define SYS_SLEEP 3U
-// Functionalty will be expanded
 
 typedef struct CPU CPU;
 typedef struct Instruction Instruction;
@@ -144,6 +143,7 @@ void execute(CPU* cpu,MemByte* mem);
 uint16_t* locate_reg(CPU* cpu,uint8_t reg);
 uint8_t* locate_add(MemByte* mem,uint16_t add_val);
 
+// Debug-Helper Quick Instruction Generation
 uint32_t encoder_modR(uint8_t op,uint8_t reg1,uint8_t reg2);
 uint32_t encoder_modI(uint8_t op,uint8_t reg1,uint16_t imm);
 uint32_t encoder_modT(uint8_t op,uint8_t reg1,uint8_t reg2,uint8_t reg3);

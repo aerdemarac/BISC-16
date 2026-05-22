@@ -1,10 +1,10 @@
 #include "cpu.h"
 
 /* Quick Encoder Macros Header File: 
- * Macros provided by this header file meant to be used when quick instruction
- * generation is needed, rather than generating a rom file, rom array will be initialized using this macros 
- * as the each element of initializer list. Instance is visible in src/cycle.c
- * */
+ * Macros provided by this header file meant to be used when quick instruction generation is needed.
+ * Ready to use when a method faster than ROM Generator needed (assembler.sh)
+ * Mostly used for debugging purposes
+*/
 
 #ifndef QUICK
 #define QUICK

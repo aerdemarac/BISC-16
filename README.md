@@ -85,13 +85,20 @@ BISC-16 is equipped with 4 decoding modes:
 - **System Call** e.g. SYSCALL
 
 ---
+## Inline Assembler
+**BISC-16** is equipped a inline assembler:
+- **Assembler** is basically a python program contains instruction-encoder methods
+- **An array of bytes** called 'rom' is initalized via mere encoder functions
+- **Then** written into a binary file.
+- **Please** insert the instructions into bytearray located in the **'auxiliary/assembler.py'**
+- **Then run './assembler.sh'** in order to generate binary file 
+- **ROM file** outputs will be located at bin/
+
+---
 
 ## TO-DO
 
-- Ability to fetch code from ROM files
-- Full Assembler
 - Couple of demo ROMs
-- Extensive SysCall capabilites
 - Comperhensive CPU documentation
 
 ---
