@@ -14,7 +14,7 @@ int main(void){
     FILE* rom_file = fopen(ROM_PATH,"rb");
 
     if(rom_file){ // If File Exists
-        fread(mem,WORD,PROG_MAX,rom_file);
+        fread(mem,DWORD,PROG_MAX,rom_file);
         fclose(rom_file);
         while(RUN){
             fetch(cpu,mem);

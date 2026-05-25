@@ -37,10 +37,10 @@
 
 /*         Flag-Macros           */
 //Unsigned 
-#define FL_ZERO     0
-#define FL_CARRY    1
+#define FL_ZERO     0 //0th Bit
+#define FL_CARRY    1 //1th Bit
 //Signed
-#define FL_NEGATIVE 2 
+#define FL_NEGATIVE 2 //2nd Bit
 
 /*         Condition Specifier-Macros           */
 #define CON_NON_ZERO    0

@@ -2,7 +2,7 @@ import struct
 import sys
 import os
 
-BIN_FILE_PATH = "bin/counter.bin"
+BIN_FILE_PATH = "bin/test.bin"
 
 MOD_REG, MOD_IMM, MOD_OFS, MOD_TRI = 0, 1, 2, 3
 GP0, GP1, GP2, GP3, GP4, GP5, GP6, GP7 = 0, 1, 2, 3, 4, 5, 6, 7
@@ -43,11 +43,11 @@ def SUB(r1, r2):         return encoder_modR(OP_SUB, r1, r2)
 def SUBI(r1, imm):       return encoder_modI(OP_SUBI, r1, imm)
 def SUBS(r1, r2, r3):    return encoder_modT(OP_SUBS, r1, r2, r3)
 def AND(r1, r2, r3):     return encoder_modT(OP_AND, r1, r2, r3)
-def ANDI(r1, imm):       return encoder_modI(OP_ANDI, r1, imm)
+def ANDI(r1,r2, imm):    return encoder_modO(OP_ANDI, r1, r2, imm)
 def OR(r1, r2, r3):      return encoder_modT(OP_OR, r1, r2, r3)
-def ORI(r1, imm):        return encoder_modI(OP_ORI, r1, imm)
+def ORI(r1, r2, imm):    return encoder_modO(OP_ORI, r1, r2, imm)
 def ZOR(r1, r2, r3):     return encoder_modT(OP_ZOR, r1, r2, r3)
-def ZORI(r1, imm):       return encoder_modI(OP_ZORI, r1, imm)
+def ZORI(r1, r2, imm):   return encoder_modO(OP_ZORI, r1, r2, imm)
 def CMP(r1, r2):         return encoder_modR(OP_CMP, r1, r2)
 def CMPI(r1, imm):       return encoder_modI(OP_CMPI, r1, imm)
 def CMPW(r1, r2, ofs):   return encoder_modO(OP_CMPW, r1, r2,ofs)
@@ -69,26 +69,7 @@ def CALL_SLEEP(ms):      return encoder_modO(OP_SYSCALL, SYS_SLEEP, IGN, ms)
 
 #ROM Array to be written into BIN File
 rom = [
-    CALL_CLEAR(),
-    MOVI(GP0, 0xA),
-    MOVI(GP1, 0x30),
-    MOVI(GP2, 0xA),
-    MOVI(GP3, 0x30),
-    MOVI(GP4, 0x31),
-    ADD(GP1, GP0),
-    CMPI(GP0, 10),
-    BRC(CON_NON_ZERO, 48),
-    CALL_PUTCHAR(GP4),
-    CALL_PUTCHAR(GP3),
-    JMP(52),
-    CALL_PUTCHAR(GP1),
-    CALL_PUTCHAR(GP2),
-    SUBI(GP0, 1),
-    SUBI(GP1, 1),
-    CALL_SLEEP(1000),
-    CMPI(GP0, 0),
-    BRC(CON_NON_ZERO, 28),
-    KILL()
+    # Program Binaries
 ]
 # Please run assembler.sh after inserting instruction macros int rom array
 

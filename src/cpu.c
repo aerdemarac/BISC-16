@@ -117,19 +117,19 @@ void decode(CPU* cpu){
             cpu->ir.reg1 = REG1_FIELD(raw);
             cpu->ir.imm = IMM_FIELD(raw);
             break;
-        case MOD_TRI:
-            cpu->ir.mode = MOD_TRI;
-            cpu->ir.opcode = OP_FIELD(raw);
-            cpu->ir.reg1 = REG1_FIELD(raw);
-            cpu->ir.reg2 = REG2_FIELD(raw);
-            cpu->ir.reg3 = REG3_FIELD(raw);
-            break;
         case MOD_OFS:
             cpu->ir.mode = MOD_OFS;
             cpu->ir.opcode = OP_FIELD(raw);
             cpu->ir.reg1 = REG1_FIELD(raw);
             cpu->ir.reg2 = REG2_FIELD(raw);
             cpu->ir.offset = OFS_FIELD(raw);
+            break;
+        case MOD_TRI:
+            cpu->ir.mode = MOD_TRI;
+            cpu->ir.opcode = OP_FIELD(raw);
+            cpu->ir.reg1 = REG1_FIELD(raw);
+            cpu->ir.reg2 = REG2_FIELD(raw);
+            cpu->ir.reg3 = REG3_FIELD(raw);
             break;
     }
     return;
@@ -287,14 +287,14 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
             }
             break;
         case OP_SR: // Mode : 0
+            /*Set FL_CARRY to whatever bit was trashed by shift operation*/
+            ((*reg1_ptr >> (shift_reg - 1)) & 0x1)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ;
             *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_reg); //Odd syntax in order to supress strict compiler warning
-
-            (*reg2_ptr && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
         case OP_SRI: // Mode : 1
+            /*Set FL_CARRY to whatever bit was trashed by shift operation*/
+            ((*reg1_ptr >> (shift_imm - 1)) & 0x1)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             *reg1_ptr = (uint16_t)(*reg1_ptr >> shift_imm);
-
-            (imm && reg1_inital & 0x01)? SET_BIT(cpu->flags, FL_CARRY) : CLEAR_BIT(cpu->flags,FL_CARRY) ; 
             break;
         case OP_SL: // Mode : 0
             *reg1_ptr = (uint16_t)(*reg1_ptr << shift_reg);
@@ -308,7 +308,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
             break;
         /*---------------------------------------------*/
         case OP_JMP:    // Mode : 1
-            cpu->pc = imm;
+            cpu->pc = imm; // Jump to the specified byte address
             break;
         case OP_BRC:    // Mode : 1
             switch (br_condition) {
