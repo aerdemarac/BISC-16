@@ -111,13 +111,13 @@
 #define OP_SYSCALL 32U     // Mode: 2
 
 /*       Memory Mapping - Boundaries      */
-#define MEM_SIZE    65536U
-#define PROG_MIN    0U
-#define PROG_MAX    5119U
-#define USRDATA_MIN 5120U // [PROGRAM-Region 5 KB MAX][USER-DATA Region - 58 KB MAX][STACK - 1 KB (- Grow)]
-#define USRDATA_MAX 64511U
-#define STACK_MIN   64512U
-#define STACK_MAX   65535U
+#define MEM_SIZE    0x10000U // 64KB
+#define PROG_MIN    0x0U
+#define PROG_MAX    0x13FFU
+#define USRDATA_MIN 0x1400U // [PROGRAM-Region 5 KB MAX][USER-DATA Region - 58 KB MAX][STACK - 1 KB (- Grow)]
+#define USRDATA_MAX 0xFBFFU
+#define STACK_MIN   0xFC00U
+#define STACK_MAX   0xFFFFU
 
 /* System-Call Functionalities*/
 #define SYS_PUTCHAR 0U

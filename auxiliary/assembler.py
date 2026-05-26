@@ -56,7 +56,7 @@ def SR(r1, r2):          return encoder_modR(OP_SR, r1, r2)
 def SRI(r1, imm):        return encoder_modI(OP_SRI, r1, imm)
 def SL(r1, r2):          return encoder_modR(OP_SL, r1, r2)
 def SLI(r1, imm):        return encoder_modI(OP_SLI, r1, imm)
-def JMP(imm):            return encoder_modI(OP_JMP, IGN, imm)
+def JMP(imm):            return encoder_modI(OP_JMP, IGN, imm) #Flow-Control Instructions takes byte-addr as argument
 def BRC(con, imm):       return encoder_modI(OP_BRC, con, imm)
 def CALL(imm):           return encoder_modI(OP_CALL, IGN, imm)
 def RET():               return encoder_modR(OP_RET, IGN, IGN)

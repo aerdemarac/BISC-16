@@ -378,7 +378,7 @@ void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
                     putchar((char)(*reg2_ptr));
                     break;
                 case SYS_PUTS:
-                    puts((const char*)(addr_ptr));
+                    puts((const char*)(addr_ptr + offset));
                     break;
                 case SYS_CLEAR:
 #ifdef _WIN32

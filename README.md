@@ -56,9 +56,9 @@ UDP is a special register that retains the memory address to manually managed se
 
 The 64KB memory space is logically divided into:
 
-- **Program section** (.text Equvilant) =>                                    [0d00000 - 0d05119]
-- **General-purpose memory region** (Manually Managed Program Data Section => [0d05120 - 0d64511]
-- **Stack region** (Grows downward) =>                                        [0b64512 - 0b65535]
+- **Program section** (.text Equvilant) =>                                    [0x0000  - 0x13FF]
+- **General-purpose memory region** (Manually Managed Program Data Section => [0x1400  - 0xFBFF]
+- **Stack region** (Grows downward) =>                                        [0xFC00  - 0xFFFF]
 
 Stack Design is kept simple therefore its only capable of storing return addresses of function calls
 
@@ -104,7 +104,7 @@ BISC-16 is equipped with 4 decoding modes:
 ---
 
 ## Documents Consumed During Development
-- **Established decent understanding of CPU architectures via succesors such as MOS6502, Motorolla 68K, Zilog Z80**
+- Established decent understanding of CPU architectures via succesors such as **MOS6502, Motorolla 68K, Zilog Z80**
 - https://www.zilog.com/docs/z80/um0080.pdf
 - http://retro.hansotten.nl/uploads/books/6502UsersManual.pdf
 - https://icourse.club/uploads/files/a9710bf2454961912f79d89b25ba33c4841f6c24.pdf
