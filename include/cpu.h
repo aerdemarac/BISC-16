@@ -125,6 +125,7 @@
 #define SYS_CLEAR 2U
 #define SYS_SLEEP 3U
 
+
 typedef struct CPU CPU;
 typedef struct Instruction Instruction;
 typedef uint8_t MemByte;
@@ -150,6 +151,7 @@ uint32_t encoder_modT(uint8_t op,uint8_t reg1,uint8_t reg2,uint8_t reg3);
 uint32_t encoder_modO(uint8_t op,uint8_t reg1,uint8_t reg2,uint16_t ofs);
 
 void clear_decoded_fields(CPU* cpu);
+
 /*---------------------------------------------------------------*/
 uint8_t* read_mem_hword(MemByte* mem,uint16_t mem_addr); // LEGACY
 uint16_t* read_mem_word(MemByte* mem,uint16_t mem_addr); // LEGACY

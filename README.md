@@ -92,7 +92,7 @@ BISC-16 is equipped with 4 decoding modes:
 - **Then** written into a binary file.
 - **Please** insert the instructions into bytearray located in the **'auxiliary/assembler.py'**
 - **Then run './assembler.sh'** in order to generate binary file 
-- **ROM file** outputs will be located at bin/
+- **ROM file** outputs will be located at rom/
 
 ---
 
@@ -100,6 +100,7 @@ BISC-16 is equipped with 4 decoding modes:
 
 - Couple of demo ROMs
 - Comperhensive CPU documentation
+- CMake Migration
 
 ---
 

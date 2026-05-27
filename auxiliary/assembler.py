@@ -2,7 +2,7 @@ import struct
 import sys
 import os
 
-BIN_FILE_PATH = "bin/test.bin"
+BIN_FILE_PATH = "rom/test.bin"
 
 MOD_REG, MOD_IMM, MOD_OFS, MOD_TRI = 0, 1, 2, 3
 GP0, GP1, GP2, GP3, GP4, GP5, GP6, GP7 = 0, 1, 2, 3, 4, 5, 6, 7
