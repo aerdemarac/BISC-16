@@ -1,12 +1,9 @@
 #include <stdio.h>
-
 #include "exec.h"
 #include "cpu.h"
 #include "qencode.h"
 
 #define ROM_PATH argv[1]
-
-extern int RUN;
 
 int main(int argc,char** argv){
     banner();

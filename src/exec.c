@@ -1,10 +1,12 @@
 #include <stdio.h>
-#include <strings.h>
 #include <string.h>
 #include "exec.h"
 
-#define BIN_EXT ".bin"
+#ifdef __unix__
+  #include <strings.h>
+#endif
 
+#define BIN_EXT ".bin"
 
 void banner(void)
 {

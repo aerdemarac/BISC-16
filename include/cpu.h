@@ -125,6 +125,7 @@
 #define SYS_CLEAR 2U
 #define SYS_SLEEP 3U
 
+extern int RUN;
 
 typedef struct CPU CPU;
 typedef struct Instruction Instruction;

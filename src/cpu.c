@@ -1,21 +1,20 @@
-/* Unlocking Hidden POSIX Methods */
-#define _DEFAULT_SOURCE
-#define _POSIX_C_SOURCE 199309L 
-
+/* Required for Cross-Platfrom Sleep Behaviour */
+#ifdef _WIN32
+    #include <Windows.h> 
+#else
+    /* Unlocking Hidden POSIX Methods */
+    #define _DEFAULT_SOURCE
+    #define _POSIX_C_SOURCE 199309L 
+    #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <unistd.h>
 
 #include "cpu.h"
 
 
-/* Required for Cross-Platfrom Sleep Behaviour */
-#ifdef _WIN32
-    #include <Windows.h> 
-#endif
 
 struct Instruction{
     uint32_t raw;
