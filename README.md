@@ -19,7 +19,7 @@ This project intentionally avoids high-level abstractions like toolchains or com
 
 BISC-16 is built around a few core principles:
 
-- **Simplicity over complexity**
+- **Simplicity First**
   With the help of RISC-style instruction-set and clean CPU design, every aspect of BISC-16 pretty simple and predictable  
 
 - **Deterministic execution**
@@ -90,7 +90,7 @@ BISC-16 is equipped with 4 decoding modes:
 - **Assembler** is basically a python program contains instruction-encoder methods
 - **An array of bytes** called 'rom' is initalized via mere encoder functions
 - **Then** written into a binary file.
-- **Please** insert the instructions into bytearray located in the **'auxiliary/assembler.py'**
+- **Please** insert the instructions into byte-array located in the **'auxiliary/assembler.py'**
 - **Then run './assembler.sh'** in order to generate binary file 
 - **ROM file** outputs will be located at rom/
 
@@ -98,7 +98,7 @@ BISC-16 is equipped with 4 decoding modes:
 
 ## TO-DO
 
-- Couple of demo ROMs
+- Extensive Demo ROMs
 - Comperhensive CPU documentation
 - CMake Migration
 

@@ -87,4 +87,4 @@ if __name__ == "__main__":
         for inst in rom:
             f.write(struct.pack("<I", inst))
             
-    print(f"Generated counter.bin - Size: {binary_size_bytes} bytes.")
+    print(f"Generated test.bin - Size: {binary_size_bytes} bytes.")
