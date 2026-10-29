@@ -48,6 +48,11 @@ int __extension_check(const char* path){
   if(!path || strlen(path) < 6 ){
     return -1;
   }
-  const char* ext = path + strlen(path) - 4;
-  return strncmp(ext,BIN_EXT,strlen(BIN_EXT)) ;
+
+  const char* dot = strrchr(path,'.');
+
+  if(!dot){
+    return -1; // char '.' not found
+  }
+  return strcmp(BIN_EXT,dot);
 }
