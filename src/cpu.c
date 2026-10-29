@@ -134,7 +134,7 @@ void decode(CPU* cpu){
     return;
 }
 
-void execute(CPU* cpu,MemByte* mem){ // Needs to be tied up
+void execute(CPU* cpu,MemByte* mem){ 
     if(!cpu || !mem){
         return;
     }

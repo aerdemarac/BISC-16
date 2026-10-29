@@ -68,7 +68,7 @@
 #define IMM_FIELD(raw)  ((raw >> 4) & 0xFFFF)
 #define OFS_FIELD(raw)  ((raw >> 0) & 0xFFFF)
 
-#define IGN 0 // Meaning: Ignore this instruction Filed
+#define IGN 0 // Meaning: Ignore this instruction field
 
 
 /*   Unique Instruction Identifier opcode + mode */
